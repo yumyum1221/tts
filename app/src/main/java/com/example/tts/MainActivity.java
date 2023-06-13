@@ -1,10 +1,19 @@
 package com.example.tts;
+import android.Manifest;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -15,7 +24,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
     Button cpvBtn;
     private AppExecutors appExecutors;
-
+    final int PERMISSION = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +37,27 @@ public class MainActivity extends AppCompatActivity {
         final String clientSecret = sharedPref.getString("application_client_secret", "");
 
         cpvBtn = (Button) findViewById(R.id.btn_cpv);
+
+        if(Build.VERSION.SDK_INT >= 23){
+            ActivityCompat.requestPermissions(this, new String[] {
+                    android.Manifest.permission.INTERNET,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            },PERMISSION);
+        }
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && !Environment.isExternalStorageManager()) {
+            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+            Uri uri = Uri.fromParts("package", getPackageName(), null);
+            intent.setData(uri);
+            startActivityForResult(intent, PERMISSION);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION);
+            }
+        }
+
         cpvBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -60,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                 String lang = s.getSelectedItem().toString();
                 String text = "";
                 if (lang.contains("한국어")) {
-                    text = "네이버 클라우드 플랫폼에서는 Clova, papago 등 네이버의 다양한 인공지능 서비스를 API 형태로 제공합니다.";
+                    text = "네이버";
                 }else if (lang.contains("영어")) {
                     text = "NAVER CLOUD PLATFORM provides various AI services in API formats, such as Clova and Papago.";
                 }else if (lang.contains("일본어")) {

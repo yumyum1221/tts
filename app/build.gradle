@@ -1,6 +1,9 @@
 plugins {
     id 'com.android.application'
 }
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 
 android {
     namespace 'com.example.tts'
@@ -8,10 +11,15 @@ android {
 
     defaultConfig {
         applicationId "com.example.tts"
-        minSdk 30
+        minSdk 33
         targetSdk 33
         versionCode 1
         versionName "1.0"
+
+        defaultConfig {
+            buildConfigField "String", "clientId_KEY", properties['clientId']
+            buildConfigField "String", "clientSecret_KEY", properties['clientSecret']
+        }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -36,6 +44,9 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
+    implementation 'com.facebook.stetho:stetho:1.5.1'
 
     implementation 'javax.inject:javax.inject:1'
 }

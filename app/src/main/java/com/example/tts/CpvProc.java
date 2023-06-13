@@ -16,11 +16,11 @@ import java.net.URLEncoder;
 
 public class CpvProc {
     public static void main(String msg, String speaker) {
-        String clientId = "";
-        String clientSecret = "";
+        String clientId=BuildConfig.clientId_KEY;
+        String clientSecret=BuildConfig.clientSecret_KEY;
         try {
             String text = URLEncoder.encode(msg, "UTF-8");
-            String apiURL = "https://naveropenapi.apigw.ntruss.com/voice-premium/v1/tts";
+            String apiURL = "https://naveropenapi.apigw.ntruss.com/tts-premium/v1/tts";
             URL url = new URL(apiURL);
             HttpURLConnection con = (HttpURLConnection)url.openConnection();
             con.setRequestMethod("POST");
